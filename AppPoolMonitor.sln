@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppPoolMonitor", "D:/AppPoolMonitor\AppPoolMonitor\AppPoolMonitor.csproj", "{7934F5A5-79F4-4319-AC6B-5EB6AF37527C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7934F5A5-79F4-4319-AC6B-5EB6AF37527C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7934F5A5-79F4-4319-AC6B-5EB6AF37527C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7934F5A5-79F4-4319-AC6B-5EB6AF37527C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7934F5A5-79F4-4319-AC6B-5EB6AF37527C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {42BBB5ED-E37E-4C9A-81DB-62BD6E85EA64}
+	EndGlobalSection
+EndGlobal
