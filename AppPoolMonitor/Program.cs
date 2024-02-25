@@ -14,36 +14,38 @@ namespace AppPoolMonitor
             Console.OutputEncoding = Encoding.UTF8;
             MainArgs sessionArgs = new MainArgs(args);
 
-            string consoleLogFile = "console.log";
             Log logConsole = new Log()
             {
                 WorkDir = sessionArgs.WorkDir,
-                LogFile = consoleLogFile
+                LogFile = "console.log"
             };
-            logConsole.Clear();
+            logConsole.Delete();
+
+            DateTime start = DateTime.Now;
+            logConsole.Write(start.ToString("yyyy-MM-dd HH:mm:ss"));
 
             MainConfig session = new MainConfig(sessionArgs.WorkDir, logConsole);
 
-            string requestCountLogFile = "requestCount.log";
             Log logCount = new Log()
             {
                 WorkDir = sessionArgs.WorkDir,
-                LogFile = requestCountLogFile
+                LogFile = "requestCount.log"
             };
+            logCount.Rotate();
 
-            string requestsLogFile = "requestList.log";
             Log logRequests = new Log()
             {
                 WorkDir = sessionArgs.WorkDir,
-                LogFile = requestsLogFile
+                LogFile = "requestList.log"
             };
+            logRequests.Rotate();
 
-            string deadlockLogFile = "deadlockList.log";
             Log logDeadlocks = new Log()
             {
                 WorkDir = sessionArgs.WorkDir,
-                LogFile = deadlockLogFile
+                LogFile = "deadlockList.log"
             };
+            logDeadlocks.Rotate();
 
             ServerManager manager = new ServerManager();
             var requests = manager.ApplicationPools
@@ -52,7 +54,6 @@ namespace AppPoolMonitor
                 .SelectMany(wp => wp.GetRequests(0));
                 //.SelectMany(wp => wp.GetRequests(10));
 
-            DateTime start = DateTime.Now;
             int requestCount = requests.Count();
             if (requestCount >= int.Parse(session.Config["RequestCountThreshold"]))
             {
@@ -81,6 +82,7 @@ namespace AppPoolMonitor
                 DataTable deadlocks = new DataTable();
                 deadlocks = query.Execute();
 
+                logDeadlocks.Write(start.ToString("yyyy-MM-dd HH:mm:ss"));
                 foreach (DataRow dataRow in deadlocks.Rows)
                 {
                     foreach (var item in dataRow.ItemArray)
@@ -88,6 +90,7 @@ namespace AppPoolMonitor
                         logDeadlocks.Write(item.ToString());
                     }
                 }
+                logDeadlocks.Write("--------------------------------");
             }
             else
             {

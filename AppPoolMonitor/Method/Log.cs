@@ -18,10 +18,22 @@ namespace AppPoolMonitor.Method
             Console.WriteLine(logText);
             File.AppendAllText(WorkDir + "\\" + LogFile, Environment.NewLine + logText);
         }
-        public void Clear()
+        public void Delete()
         {
             File.Delete(WorkDir + "\\" + LogFile);
         }
 
+        public void Rotate()
+        {
+            FileInfo file = new FileInfo(WorkDir + "\\" + LogFile);
+            if (file.Exists)
+            {
+                if (file.Length >= 1048576)
+                {
+                    File.Move(WorkDir + "\\" + LogFile,
+                        WorkDir + "\\" + file.Name + DateTime.Now.ToString("_yyyy-MM-dd_HHmmss") + file.Extension);
+                }
+            }
+        }
     }
 }
