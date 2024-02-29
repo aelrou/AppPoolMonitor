@@ -7,7 +7,7 @@ namespace AppPoolMonitor.Method
 {
     internal class MainConfig
     {
-        internal readonly Dictionary<string, string> Config;
+        internal readonly Dictionary<string, string[]> Config;
         public MainConfig(string workDir, Log logConsole)
         {
             string configFile = "config.json";
@@ -16,18 +16,33 @@ namespace AppPoolMonitor.Method
             {
                 logConsole.Write("Read config " + configFilePath);
                 string configText = File.ReadAllText(configFilePath);
-                Config = JsonConvert.DeserializeObject<Dictionary<string, string>>(configText);
+                Config = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(configText);
             }
             else
             {
                 logConsole.Write("Config not found.");
-                Config = new Dictionary<string, string>();
-                Config.Add("AppPoolName", "Default Website");
-                Config.Add("RequestCountThreshold", "20");
-                Config.Add("DBDataSource", "server\\instance");
-                Config.Add("DBInitialCatalog", "database");
-                Config.Add("DBUserId", "username");
-                Config.Add("DBPassword", "password");
+                Config = new Dictionary<string, string[]>();
+
+                string[] AppPoolName = { "Default Website" };
+                Config.Add("AppPoolName", AppPoolName);
+
+                string[] RequestCountThreshold = { "20" };
+                Config.Add("RequestCountThreshold", RequestCountThreshold);
+
+                string[] DBDataSource = { "server\\instance" };
+                Config.Add("DBDataSource", DBDataSource);
+
+                string[] DBInitialCatalog = { "database" };
+                Config.Add("DBInitialCatalog", DBInitialCatalog);
+
+                string[] AppPooDBUserIdlName = { "username" };
+                Config.Add("DBUserId", AppPooDBUserIdlName);
+
+                string[] DBPassword = { "password" };
+                Config.Add("DBPassword", DBPassword);
+
+                string[] UrlIgnoreList = { "firstignore.url", "secondignore.url" };
+                Config.Add("UrlIgnoreList", UrlIgnoreList);
 
                 logConsole.Write("Write config " + configFilePath);
                 string configText = JsonConvert.SerializeObject(Config, Formatting.Indented);
@@ -37,22 +52,56 @@ namespace AppPoolMonitor.Method
             try
             {
                 logConsole.Write("AppPoolName");
-                Config["AppPoolName"].ToString();
+                if (Config["AppPoolName"].Length != 1)
+                {
+                    throw new InvalidOperationException("Number of values must equal 1");
+                }
+                Config["AppPoolName"].GetValue(0).ToString();
                 
                 logConsole.Write("RequestCountThreshold");
-                Config["RequestCountThreshold"].ToString();
+                if (Config["RequestCountThreshold"].Length != 1)
+                {
+                    throw new InvalidOperationException("Number of values must equal 1");
+                }
+                Config["RequestCountThreshold"].GetValue(0).ToString();
                 
                 logConsole.Write("DBDataSource");
-                Config["DBDataSource"].ToString();
+                if (Config["DBDataSource"].Length != 1)
+                {
+                    throw new InvalidOperationException("Number of values must equal 1");
+                }
+                Config["DBDataSource"].GetValue(0).ToString();
                 
                 logConsole.Write("DBInitialCatalog");
-                Config["DBInitialCatalog"].ToString();
+                if (Config["DBInitialCatalog"].Length != 1)
+                {
+                    throw new InvalidOperationException("Number of values must equal 1");
+                }
+                Config["DBInitialCatalog"].GetValue(0).ToString();
 
                 logConsole.Write("DBUserId");
-                Config["DBUserId"].ToString();
+                if (Config["DBUserId"].Length != 1)
+                {
+                    throw new InvalidOperationException("Number of values must equal 1");
+                }
+                Config["DBUserId"].GetValue(0).ToString();
 
                 logConsole.Write("DBPassword");
-                Config["DBPassword"].ToString();
+                if (Config["DBPassword"].Length != 1)
+                {
+                    throw new InvalidOperationException("Number of values must equal 1");
+                }
+                Config["DBPassword"].GetValue(0).ToString();
+
+                logConsole.Write("UrlIgnoreList");
+                if (Config["UrlIgnoreList"].Length == 0)
+                {
+                    throw new InvalidOperationException("Number of values must be greater than 0");
+                }
+                foreach (var url in Config["UrlIgnoreList"])
+                {
+                    url.ToString();
+                }
             }
             catch (Exception ex)
             {

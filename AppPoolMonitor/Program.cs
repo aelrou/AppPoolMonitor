@@ -49,34 +49,47 @@ namespace AppPoolMonitor
 
             ServerManager manager = new ServerManager();
             var requests = manager.ApplicationPools
-                .Where(pool => pool.Name == session.Config["AppPoolName"])
+                .Where(pool => pool.Name == session.Config["AppPoolName"].GetValue(0).ToString())
                 .SelectMany(pool => pool.WorkerProcesses)
                 .SelectMany(wp => wp.GetRequests(0));
                 //.SelectMany(wp => wp.GetRequests(10));
 
             int requestCount = requests.Count();
-            if (requestCount >= int.Parse(session.Config["RequestCountThreshold"]))
+            if (requestCount >= int.Parse(session.Config["RequestCountThreshold"].GetValue(0).ToString()))
             {
                 logCount.Write(start.ToString("yyyy-MM-dd HH:mm:ss") + " Request count: " + requestCount + " >>> WARNING <<<");
                 logRequests.Write(start.ToString("yyyy-MM-dd HH:mm:ss"));
                 foreach (var request in requests)
                 {
-                    logRequests.Write(request.ClientIPAddr
-                                      + " " + request.Verb
-                                      + " --- https://" + request.HostName + request.Url
-                                      + " --- TimeElapsed:" + request.TimeElapsed
-                                      + " TimeInState:" + request.TimeInState
-                                      + " TimeInModule:" + request.TimeInModule
-                    );
+                    bool ignore = false;
+                    foreach (var url in session.Config["UrlIgnoreList"])
+                    {
+                        if (request.Url.Contains(url))
+                        {
+                            ignore = true;
+                            break;
+                        }
+                    }
+                    if (ignore == false)
+                    {
+                        logRequests.Write(request.ClientIPAddr
+                                          + " " + request.Verb
+                                          + " --- https://" + request.HostName + request.Url
+                                          + " --- TimeElapsed:" + request.TimeElapsed
+                                          + " TimeInState:" + request.TimeInState
+                                          + " TimeInModule:" + request.TimeInModule
+                        );
+
+                    }
                 }
                 logRequests.Write("--------------------------------");
 
                 Deadlocks query = new Deadlocks()
                 {
-                    DataSource = session.Config["DBDataSource"],
-                    InitialCatalog = session.Config["DBInitialCatalog"],
-                    UserId = session.Config["DBUserId"],
-                    Password = session.Config["DBPassword"]
+                    DataSource = session.Config["DBDataSource"].GetValue(0).ToString(),
+                    InitialCatalog = session.Config["DBInitialCatalog"].GetValue(0).ToString(),
+                    UserId = session.Config["DBUserId"].GetValue(0).ToString(),
+                    Password = session.Config["DBPassword"].GetValue(0).ToString()
                 };
 
                 DataTable deadlocks = new DataTable();
